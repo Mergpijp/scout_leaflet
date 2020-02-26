@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Explore leaflet</title>
+     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+       integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+       crossorigin=""/>
+     <link rel="stylesheet" href="css/base.css">
+     <!-- Make sure you put this AFTER Leaflet's CSS -->
+     <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+       integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+       crossorigin="">
+
+     </script>
+     <script>
+
+     </script>
+   </head>
+
+    <body>
+     <div id="mapid"></div>
+
+    <script>
+        var map = L.map(mapid);
+
+        //var wmsLayer = L.tileLayer.wms('https://demo.boundlessgeo.com/geoserver/ows?', wmsOptions).addTo(map);
+
+        var wmsLayer = L.tileLayer.wms('https://demo.boundlessgeo.com/geoserver/ows?', {
+            layers: 'ne:ne_10m_admin_0_countries,ne:ne_10m_admin_0_boundary_lines_land'
+        }).addTo(map);
+
+        var basemaps = {
+            Countries: L.tileLayer.wms('https://demo.boundlessgeo.com/geoserver/ows?', {
+                layers: 'ne:ne_10m_admin_0_countries'
+            }),
+
+            Boundaries: L.tileLayer.wms('https://demo.boundlessgeo.com/geoserver/ows?', {
+                layers: 'ne:ne_10m_admin_0_boundary_lines_land'
+            }),
+            'Countries, then boundaries': L.tileLayer.wms('https://demo.boundlessgeo.com/geoserver/ows?', {
+                layers: 'ne:ne_10m_admin_0_countries,ne:ne_10m_admin_0_boundary_lines_land'
+            }),
+
+            'Boundaries, then countries': L.tileLayer.wms('https://demo.boundlessgeo.com/geoserver/ows?', {
+                layers: 'ne:ne_10m_admin_0_boundary_lines_land,ne:ne_10m_admin_0_countries'
+            })
+        };
+
+        L.control.layers(basemaps).addTo(map);
+
+        basemaps.Countries.addTo(map);
+    </script>
+     </body>
+</html>

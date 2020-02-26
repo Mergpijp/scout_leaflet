@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Explore leaflet</title>
+     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+       integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+       crossorigin=""/>
+     <link rel="stylesheet" href="css/base.css">
+     <!-- Make sure you put this AFTER Leaflet's CSS -->
+     <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+       integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+             crossorigin=""></script>
+	<style>
+		html, body {
+			height: 100%;
+			margin: 0;
+		}
+		#map {
+			width: 600px;
+			height: 400px;
+		}
+	</style>
+    </head>
+    <body>
+     <div id="map"></div>
+    <script type="text/javascript" src="eu-countries.js"></script>
+    <script>
+        var map = L.map('map');
+        map.createPane('labels');
+        map.getPane('labels').style.zIndex = 650;
+        map.getPane('labels').style.pointerEvents = 'none';
+        var positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
+                attribution: '©OpenStreetMap, ©CartoDB'
+        }).addTo(map);
+
+        var positronLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png', {
+                attribution: '©OpenStreetMap, ©CartoDB',
+                pane: 'labels'
+        }).addTo(map);
+
+        var geojson = L.geoJson(euCountries).addTo(map);
+        geojson.eachLayer(function (layer) {
+            layer.bindPopup(layer.feature.properties.name);
+        });
+
+        map.fitBounds(geojson.getBounds())
+    </script>
+    </body>
+</html>
