@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Explore leaflet</title>
+     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+       integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+       crossorigin=""/>
+     <link rel="stylesheet" href="css/base.css">
+     <!-- Make sure you put this AFTER Leaflet's CSS -->
+     <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+       integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+             crossorigin=""></script>
+	<style>
+		html, body {
+			height: 100%;
+			margin: 0;
+		}
+		#map {
+			width: 600px;
+			height: 400px;
+		}
+	</style>
+    </head>
+    <body>
+     <div id="map"></div>
+     <script type="text/javascript" src="classybrew.min.js"></script>
+    <script type="text/javascript" src="storm_events.js"></script>
+    <script>
+        // create leaflet map
+        var map = L.map('map').setView([37.8, -96], 3);
+
+        // Add basemap
+        L.tileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.{ext}', {
+            attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> — Map data © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+            subdomains: 'abcd',
+            minZoom: 0,
+            maxZoom: 20,
+            ext: 'png'
+        }).addTo(map);
+
+        // create classybrew object
+        var brew = new classyBrew();
+
+        // pass values from your geojson object into an empty array
+        // see link above to view geojson used in this example
+        var values = [];
+        for (var i = 0; i < storm_events.features.length; i++){
+            if (storm_events.features[i].properties['PERCENT'] == null) continue;
+            values.push(storm_events.features[i].properties['PERCENT']);
+        }
+
+        // pass array to our classybrew series
+        brew.setSeries(values);
+
+        // define number of classes
+        brew.setNumClasses(6);
+
+        // set color ramp code
+        brew.setColorCode("Blues");
+
+        // classify by passing in statistical method
+        // i.e. equal_interval, jenks, quantile
+        brew.classify("equal_interval");
+
+        // style function to return
+        // fill color based on brew.getColorInRange() method
+        function style(feature) {
+            return {
+                weight: 2,
+                opacity: 1,
+                color: 'white',
+                dashArray: '3',
+                fillOpacity: 0.7,
+                fillColor: brew.getColorInRange(feature.properties.PERCENT)
+            }
+        }
+
+
+        // add geojson to map
+        // calling the style method on each feature
+        geojson = L.geoJson(storm_events, {
+            style: style
+        }).addTo(map)
+    </script>
+    </body>
+</html>
